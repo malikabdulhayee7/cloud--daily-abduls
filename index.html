@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily Cloud Haiku</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: 'Georgia', serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 40px 16px; }
+  h1 { text-align: center; font-weight: 400; letter-spacing: 1px; margin-bottom: 4px; }
+  p.sub { text-align: center; color: #94a3b8; margin-top: 0; margin-bottom: 40px; font-family: sans-serif; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
+  .card { background: #1e293b; border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-left: 3px solid #38bdf8; }
+  .card .haiku { white-space: pre-line; font-size: 18px; line-height: 1.8; margin: 0 0 12px 0; }
+  .card .meta { font-family: sans-serif; font-size: 12px; color: #94a3b8; }
+  #empty { text-align: center; color: #64748b; font-family: sans-serif; }
+</style>
+</head>
+<body>
+  <h1>☁️ Daily Cloud Haiku</h1>
+  <p class="sub">An always-on agent that writes a new cloud/DevOps haiku every day</p>
+  <div class="grid" id="grid"></div>
+  <p id="empty" style="display:none;">No entries yet — check back after the agent's first run.</p>
+
+<script>
+  fetch('gallery/latest.json')
+    .then(r => r.json())
+    .then(items => {
+      const grid = document.getElementById('grid');
+      if (!items.length) {
+        document.getElementById('empty').style.display = 'block';
+        return;
+      }
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <p class="haiku">${item.haiku}</p>
+          <div class="meta">${item.date} · ${item.topic} · ${item.weather}</div>`;
+        grid.appendChild(card);
+      });
+    })
+    .catch(() => { document.getElementById('empty').style.display = 'block'; });
+</script>
+</body>
+</html>
