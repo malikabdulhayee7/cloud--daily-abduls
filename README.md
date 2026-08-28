@@ -562,8 +562,3 @@ GitHub: [@malikabdulhayee7](https://github.com/malikabdulhayee7)
 
 ---
 
-## 📄 License
-
-No explicit open-source license is currently included in this repository.
-
-Add a `LICENSE` file if you want to distribute the project under a specific open-source license.
