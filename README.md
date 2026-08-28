@@ -1,9 +1,9 @@
 # 🌩️ Daily Cloud Haiku: An Autonomous Creative Agent
 
-[![AWS Builder Center](https://img.shields.io/badge/AWS-Builder_Center_Challenge-FF9900?logo=amazonaws\&logoColor=white)](https://builder.aws.com/)
-[![AWS Services](https://img.shields.io/badge/AWS-EventBridge%20%7C%20Lambda%20%7C%20Bedrock%20%7C%20S3-232F3E?logo=amazonaws\&logoColor=white)](https://aws.amazon.com/)
-[![Language](https://img.shields.io/badge/Python-3.12-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
-[![Architecture](https://img.shields.io/badge/Architecture-Serverless-orange?logo=awslambda\&logoColor=white)](https://aws.amazon.com/serverless/)
+[![AWS Builder Center](https://img.shields.io/badge/AWS-Builder_Center_Challenge-FF9900?logo=amazonaws&logoColor=white)](https://builder.aws.com/)
+[![AWS Services](https://img.shields.io/badge/AWS-EventBridge%20%7C%20Lambda%20%7C%20Bedrock%20%7C%20S3-232F3E?logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+[![Language](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Architecture](https://img.shields.io/badge/Architecture-Serverless-orange?logo=awslambda&logoColor=white)](https://aws.amazon.com/serverless/)
 
 > **An always-on, serverless AI agent that turns cloud and DevOps concepts into creative daily haikus — enriched with real-time Lahore weather and published automatically to an S3-hosted gallery.**
 
@@ -13,7 +13,7 @@
 
 ## 📖 Overview
 
-**Daily Cloud Haiku** is an autonomous creative application built for the **AWS Builder Center Weekend Challenge: Set Your Creative App Free**.
+**Daily Cloud Haiku** is an autonomous creative application built for the **AWS Builder Center Weekend Challenge: Set Your Creative App Free**, and extended for the **Weekend Showcase Challenge** with a second, on-demand generation mode.
 
 As a DevSecOps engineer, my world is filled with infrastructure, deployments, logs, alerts, IAM policies, containers, and cloud services. This project turns that technical world into something small, creative, and reflective.
 
@@ -151,14 +151,14 @@ This file contains the latest **15 entries** used by the frontend gallery.
 ## 🛠️ AWS Services Used
 
 | Service                             | Role                                                     |
-| ----------------------------------- | -------------------------------------------------------- |
+| ------------------------------------ | ---------------------------------------------------------|
 | 🕒 **Amazon EventBridge Scheduler** | Automatically triggers the daily agent                   |
 | ⚙️ **AWS Lambda**                   | Serverless orchestration and AI workflow execution       |
 | 🧠 **Amazon Bedrock**               | Generates haikus using DeepSeek V3.2                     |
 | 🪣 **Amazon S3**                    | Stores daily JSON artifacts and hosts the static gallery |
 | 🌐 **Amazon API Gateway**           | Provides the on-demand `POST /generate-haiku` API        |
 | 🔐 **AWS IAM**                      | Controls Lambda permissions using least privilege        |
-| 📊 **Amazon CloudWatch**            | Captures Lambda execution logs and failures              |
+| 📊 **Amazon CloudWatch**            | Captures Lambda execution logs and failures               |
 
 ### External Service
 
@@ -198,7 +198,7 @@ cloud--daily-abduls/
 │       ├── Bedrock generation
 │       └── S3 persistence
 │
-├── lambda-on-demand.py
+├── lambda_ondemand_function.py
 │   └── API-triggered AWS service haiku generator
 │
 └── README.md
@@ -387,7 +387,7 @@ Use the scheduler's timezone-aware configuration so the schedule remains aligned
 Create another Python 3.12 Lambda using:
 
 ```text
-lambda-on-demand.py
+lambda_ondemand_function.py
 ```
 
 Expose it through an **API Gateway HTTP API** route:
@@ -540,7 +540,7 @@ The same architecture pattern can be adapted for practical applications such as:
 
 ## 🏆 Built for the AWS Builder Center Challenge
 
-Built as part of the **AWS Builder Center Weekend Challenge — Set Your Creative App Free**, August 2026.
+Built as part of the **AWS Builder Center Weekend Challenge — Set Your Creative App Free**, and extended for the **Weekend Showcase Challenge**, August 2026.
 
 The goal was simple:
 
