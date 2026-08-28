@@ -1,45 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Daily Cloud Haiku</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body { font-family: 'Georgia', serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 40px 16px; }
-  h1 { text-align: center; font-weight: 400; letter-spacing: 1px; margin-bottom: 4px; }
-  p.sub { text-align: center; color: #94a3b8; margin-top: 0; margin-bottom: 40px; font-family: sans-serif; font-size: 14px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
-  .card { background: #1e293b; border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-left: 3px solid #38bdf8; }
-  .card .haiku { white-space: pre-line; font-size: 18px; line-height: 1.8; margin: 0 0 12px 0; }
-  .card .meta { font-family: sans-serif; font-size: 12px; color: #94a3b8; }
-  #empty { text-align: center; color: #64748b; font-family: sans-serif; }
-</style>
-</head>
-<body>
-  <h1>☁️ Daily Cloud Haiku</h1>
-  <p class="sub">An always-on agent that writes a new cloud/DevOps haiku every day</p>
-  <div class="grid" id="grid"></div>
-  <p id="empty" style="display:none;">No entries yet — check back after the agent's first run.</p>
 
-<script>
-  fetch('gallery/latest.json')
-    .then(r => r.json())
-    .then(items => {
-      const grid = document.getElementById('grid');
-      if (!items.length) {
-        document.getElementById('empty').style.display = 'block';
-        return;
-      }
-      items.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Cloud Haiku</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 40px 16px;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        p.sub {
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 0;
+            margin-bottom: 32px;
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+
+        .theme-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            font-family: sans-serif;
+        }
+
+        .theme-toggle button {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .theme-toggle button:hover {
+            border-color: #38bdf8;
+        }
+
+        .theme-toggle button:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .ondemand-card {
+            max-width: 500px;
+            margin: 0 auto 40px auto;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-left: 3px solid #a78bfa;
+            display: none;
+            font-family: 'Georgia', serif;
+        }
+
+        .ondemand-card .haiku {
+            white-space: pre-line;
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 0 0 12px 0;
+        }
+
+        .ondemand-card .meta {
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-left: 3px solid #38bdf8;
+        }
+
+        .card .haiku {
+            white-space: pre-line;
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 0 0 12px 0;
+        }
+
+        .card .meta {
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        #empty {
+            text-align: center;
+            color: #64748b;
+            font-family: sans-serif;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>☁️ Daily Cloud Haiku</h1>
+    <p class="sub">An always-on agent that writes a new cloud/DevOps haiku every day</p>
+
+    <div class="theme-toggle">
+        <button id="awsBtn" onclick="generateAwsHaiku()">☁️ Generate AWS Service Haiku</button>
+    </div>
+
+    <div class="ondemand-card" id="ondemandCard">
+        <p class="haiku" id="ondemandHaiku"></p>
+        <div class="meta" id="ondemandMeta"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <p id="empty" style="display:none;">No entries yet — check back after the agent's first run.</p>
+
+    <script>
+        // TODO: replace with your actual API Gateway Invoke URL + /generate-haiku
+        const API_URL = "https://dpnt42qsee.execute-api.us-east-1.amazonaws.com/generate-haiku";
+
+        function generateAwsHaiku() {
+            const btn = document.getElementById('awsBtn');
+            const card = document.getElementById('ondemandCard');
+            const haikuEl = document.getElementById('ondemandHaiku');
+            const metaEl = document.getElementById('ondemandMeta');
+
+            btn.disabled = true;
+            btn.textContent = '✨ Generating...';
+
+            fetch(API_URL, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    haikuEl.textContent = data.haiku;
+                    metaEl.textContent = `AWS theme · ${data.service_name}`;
+                    card.style.display = 'block';
+                })
+                .catch(() => {
+                    haikuEl.textContent = 'Could not generate a haiku right now — try again.';
+                    metaEl.textContent = '';
+                    card.style.display = 'block';
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = '☁️ Generate AWS Service Haiku';
+                });
+        }
+
+        fetch('gallery/latest.json')
+            .then(r => r.json())
+            .then(items => {
+                const grid = document.getElementById('grid');
+                if (!items.length) {
+                    document.getElementById('empty').style.display = 'block';
+                    return;
+                }
+                items.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
           <p class="haiku">${item.haiku}</p>
           <div class="meta">${item.date} · ${item.topic} · ${item.weather}</div>`;
-        grid.appendChild(card);
-      });
-    })
-    .catch(() => { document.getElementById('empty').style.display = 'block'; });
-</script>
+                    grid.appendChild(card);
+                });
+            })
+            .catch(() => { document.getElementById('empty').style.display = 'block'; });
+    </script>
 </body>
+
 </html>
